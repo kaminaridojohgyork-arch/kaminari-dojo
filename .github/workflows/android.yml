@@ -8,13 +8,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
@@ -23,13 +26,34 @@ jobs:
         run: |
           mkdir -p app/src/main/java/hu/kaminari/dojo
           mkdir -p app/src/main/assets
-          cp build.gradle app/build.gradle
+
           cp MainActivity.java app/src/main/java/hu/kaminari/dojo/
           cp AndroidManifest.xml app/src/main/
           cp index.html app/src/main/assets/
-          printf "plugins {\n    id 'com.android.application' version '8.7.3' apply false\n}\n" > build.gradle
 
-      - uses: gradle/actions/setup-gradle@v4
+          if [ -f logo.png ]; then
+            cp logo.png app/src/main/assets/
+          fi
+
+          if [ -f kaminari-hatter.jpg ]; then
+            cp kaminari-hatter.jpg app/src/main/assets/
+          fi
+
+          mkdir -p app/src/main/res/drawable
+          mkdir -p app/src/main/res/mipmap
+
+          if [ -f ic_launcher.png ]; then
+            cp ic_launcher.png app/src/main/res/mipmap/
+          fi
+
+          cat > build.gradle <<'EOF'
+          plugins {
+              id 'com.android.application' version '8.7.3' apply false
+          }
+          EOF
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
 
