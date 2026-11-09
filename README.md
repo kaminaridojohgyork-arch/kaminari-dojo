@@ -1,14 +1,9 @@
-# Kaminari Dojo – Android prototípus
+# Kaminari Dojo – bővített Android alkalmazás
 
-Ingyenes, offline Android alkalmazás. A tagdíjak 4 csoporthoz külön, tanévenként szerkeszthetők. A főnézet automatikusan az aktuális hónapot mutatja, az éves táblázat és a csoportonként feltöltött fotó külön megnyitható.
+## Tartalom
+Kék villámos Kaminari háttér, embléma és alkalmazásikon. Főoldal, edzésidők, események, hírek, tagdíjak (4 csoport, szeptember–június), vizsgainformációk, galéria, kapcsolat, PIN-es helyi admin, JSON biztonsági mentés és import.
 
-**Fontos:** az adatok és képek kizárólag azon a telefonon tárolódnak, ahol beállítják őket. Nincs központi adatbázis, többkészülékes szinkron, felhasználói bejelentkezés vagy adminvédelem. Ezért ez még nem a szülőknek terjeszthető végleges verzió.
+## Feltöltés GitHubra
+A ZIP-et **csomagold ki**, és a benne levő `app`, `.github` mappákat és gyökérfájlokat a `kaminari-dojo` repository gyökerébe töltsd fel a mappastruktúrát megtartva. A régi, gyökérben levő `index.html`, `MainActivity.java`, `AndroidManifest.xml` stb. fájlokat nem használja a build: a helyes fájlok az `app/src/main/` alatt vannak. GitHub Actions → Android APK → sikeres futás → Artifacts → Kaminari-Dojo-APK → `app-debug.apk`.
 
-## APK elkészítése GitHubon
-
-1. Töltsd fel a ZIP **kicsomagolt tartalmát**, a mappaszerkezetet megtartva a repository gyökerébe.
-2. Commit changes.
-3. Actions → Android APK → legutóbbi sikeres futás → Artifacts → Kaminari-Dojo-APK.
-4. Az artifact ZIP-ben található `app-debug.apk` telepíthető Androidra. A telefon figyelmeztethet ismeretlen forrásra.
-
-A GitHub Actions ingyenes kerete és az Android buildkörnyezet elérhetősége változhat. A projekt nem igényel fizetős tárhelyet.
+**Figyelem:** ez offline prototípus, a telefonon végzett admin módosítások nem jutnak el más készülékekre. A PIN csak helyi védelem. A szülőknek központilag frissülő változathoz később közös adatszolgáltatás szükséges. Az edzésidőket és eseményeket közzététel előtt ellenőrizd.
