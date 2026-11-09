@@ -8,16 +8,37 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+
+      - name: Restore Android project structure
+        run: |
+          mkdir -p app/src/main/java/hu/kaminari/dojo
+          mkdir -p app/src/main/assets
+          cp build.gradle app/build.gradle
+          cp MainActivity.java app/src/main/java/hu/kaminari/dojo/
+          cp AndroidManifest.xml app/src/main/
+          cp index.html app/src/main/assets/
+          printf "plugins {\n    id 'com.android.application' version '8.7.3' apply false\n}\n" > build.gradle
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
       - name: Build APK
         run: gradle assembleDebug --no-daemon
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Kaminari-Dojo-APK
-          path: '**/build/outputs/apk/debug/*.apk'
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
