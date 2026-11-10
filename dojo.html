@@ -23,7 +23,7 @@ const remote=snapshot.val();
 if(!remote||typeof remote!=='object')return;
 for(const k of ['news','events','exams'])if(typeof remote[k]==='string')data[k]=remote[k];
 if(remote.fees&&typeof remote.fees==='object')data.fees=remote.fees;
-if(remote.gallery&&typeof remote.gallery==='object'){data.galleryOnline=Object.values(remote.gallery).filter(v=>typeof v==='string'&&/^(data:image\\/jpeg;base64,|https:\\/\\/)/i.test(v)).slice(-10)}else if(typeof remote.gallery==='string'&&/^https:\\/\\//i.test(remote.gallery)){data.galleryOnline=[remote.gallery]}else{data.galleryOnline=[]}
+if(remote.gallery&&typeof remote.gallery==='object'){data.galleryOnline=Object.values(remote.gallery).filter(v=>typeof v==='string'&&(v.startsWith('data:image/jpeg;base64,')||v.startsWith('https://'))).slice(-10)}else if(typeof remote.gallery==='string'&&remote.gallery.startsWith('https://')){data.galleryOnline=[remote.gallery]}else{data.galleryOnline=[]}
 renderAll();
 const msg=document.getElementById('syncStatus');if(msg)msg.textContent='Központi adatok szinkronizálva';
 },error=>{const msg=document.getElementById('syncStatus');if(msg)msg.textContent='A központi adatok nem érhetők el. Az alapinformációk láthatók.';console.warn('Firebase sync:',error.code)});
