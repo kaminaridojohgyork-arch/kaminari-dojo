@@ -1,0 +1,9 @@
+{
+  "apiKey": "AIzaSyBIMi2puHdctU9619GZtWTHfnoTodPOPk",
+  "authDomain": "kaminari-dojo.firebaseapp.com",
+  "databaseURL": "https://kaminari-dojo-default-rtdb.europe-west1.firebasedatabase.app",
+  "projectId": "kaminari-dojo",
+  "storageBucket": "kaminari-dojo.firebasestorage.app",
+  "messagingSenderId": "293927833714",
+  "appId": "1:293927833714:web:2af8ecde07cdc4de1db2eb"
+}
