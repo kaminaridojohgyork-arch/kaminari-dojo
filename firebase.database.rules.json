@@ -1,0 +1,25 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "public": {
+      ".read": true,
+      ".write": false,
+      "news": {
+        ".write": "auth != null && auth.uid === 'REPLACE_WITH_ADMIN_UID'"
+      },
+      "events": {
+        ".write": "auth != null && auth.uid === 'REPLACE_WITH_ADMIN_UID'"
+      },
+      "fees": {
+        ".write": "auth != null && auth.uid === 'REPLACE_WITH_ADMIN_UID'"
+      },
+      "exams": {
+        ".write": "auth != null && auth.uid === 'REPLACE_WITH_ADMIN_UID'"
+      },
+      "gallery": {
+        ".write": "auth != null && auth.uid === 'REPLACE_WITH_ADMIN_UID'"
+      }
+    }
+  }
+}
