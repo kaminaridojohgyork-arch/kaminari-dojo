@@ -23,7 +23,7 @@ const remote=snapshot.val();
 if(!remote||typeof remote!=='object')return;
 for(const k of ['news','events','exams'])if(typeof remote[k]==='string')data[k]=remote[k];
 if(remote.fees&&typeof remote.fees==='object')data.fees=remote.fees;
-if(remote.photos&&typeof remote.photos==='object')data.photos=remote.photos;
+if(typeof remote.gallery==='string'){if(/^https:\/\//i.test(remote.gallery))data.photos.gallery=remote.gallery;else delete data.photos.gallery;}
 renderAll();
 const msg=document.getElementById('syncStatus');if(msg)msg.textContent='Központi adatok szinkronizálva';
 },error=>{const msg=document.getElementById('syncStatus');if(msg)msg.textContent='A központi adatok nem érhetők el. Az alapinformációk láthatók.';console.warn('Firebase sync:',error.code)});
