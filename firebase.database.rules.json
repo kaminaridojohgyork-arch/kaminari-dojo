@@ -6,19 +6,19 @@
       ".read": true,
       ".write": false,
       "news": {
-        ".write": "auth != null && auth.uid === 'REPLACE_WITH_ADMIN_UID'"
+        ".write": "auth != null && auth.uid === 'RE9QjkQYIVgEOqZ5gpVQbINffDv2'"
       },
       "events": {
-        ".write": "auth != null && auth.uid === 'REPLACE_WITH_ADMIN_UID'"
+        ".write": "auth != null && auth.uid === 'RE9QjkQYIVgEOqZ5gpVQbINffDv2'"
       },
       "fees": {
-        ".write": "auth != null && auth.uid === 'REPLACE_WITH_ADMIN_UID'"
+        ".write": "auth != null && auth.uid === 'RE9QjkQYIVgEOqZ5gpVQbINffDv2'"
       },
       "exams": {
-        ".write": "auth != null && auth.uid === 'REPLACE_WITH_ADMIN_UID'"
+        ".write": "auth != null && auth.uid === 'RE9QjkQYIVgEOqZ5gpVQbINffDv2'"
       },
       "gallery": {
-        ".write": "auth != null && auth.uid === 'REPLACE_WITH_ADMIN_UID'"
+        ".write": "auth != null && auth.uid === 'RE9QjkQYIVgEOqZ5gpVQbINffDv2'"
       }
     }
   }
