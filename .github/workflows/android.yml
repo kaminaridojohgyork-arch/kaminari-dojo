@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -66,3 +66,10 @@ jobs:
           name: Kaminari-Dojo-APK
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+      - name: Publish latest public APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view android-latest >/dev/null 2>&1 || gh release create android-latest --title "Kaminari Dojo – legfrissebb Android alkalmazás" --notes "A Kaminari Dojo aktuális Android tesztverziója. A hírek és az események online frissülnek." --latest
+          gh release upload android-latest app/build/outputs/apk/debug/app-debug.apk#Kaminari-Dojo.apk --clobber
