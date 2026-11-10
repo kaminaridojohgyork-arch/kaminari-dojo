@@ -3,7 +3,7 @@ import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js';
 const ADMIN='RE9QjkQYIVgEOqZ5gpVQbINffDv2';
-const app=initializeApp({apiKey:'AIzaSyBIMi2puHdctU9619GZtWTHfnoTodPOPk',authDomain:'kaminari-dojo.firebaseapp.com',databaseURL:'https://kaminari-dojo-default-rtdb.europe-west1.firebasedatabase.app',projectId:'kaminari-dojo',appId:'1:293927833714:web:2af8ecde07cdc4de1db2eb'});
+const app=initializeApp({apiKey:'AIzaSyBIW12puH6ctU9619GZtWTtHfnoTo6POPk',authDomain:'kaminari-dojo.firebaseapp.com',databaseURL:'https://kaminari-dojo-default-rtdb.europe-west1.firebasedatabase.app',projectId:'kaminari-dojo',appId:'1:293927833714:web:2af8ecd007cdc4de1db2eb'});
 const auth=getAuth(app),db=getDatabase(app),$=id=>document.getElementById(id),months=['Szeptember','Október','November','December','Január','Február','Március','Április','Május','Június'];let fees={};const school=new Date().getMonth()>=8?new Date().getFullYear():new Date().getFullYear()-1;$('year').value=school;
 function status(t){$('status').textContent=t}
 function key(){return $('group').value+'_'+$('year').value}
