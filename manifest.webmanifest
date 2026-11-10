@@ -1,0 +1,19 @@
+{
+  "name": "Kaminari Dojo",
+  "short_name": "Kaminari",
+  "description": "Kaminari Karate SE – Hévízgyörk és Tura",
+  "lang": "hu",
+  "start_url": "./dojo.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#071525",
+  "theme_color": "#071525",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
