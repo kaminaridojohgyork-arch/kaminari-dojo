@@ -1,0 +1,39 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "public": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'REPLACE_WITH_ADMIN_UID'"
+    },
+    "private": {
+      ".read": "auth != null && auth.uid === 'REPLACE_WITH_ADMIN_UID'",
+      ".write": "auth != null && auth.uid === 'REPLACE_WITH_ADMIN_UID'",
+      "students": {
+        "$studentId": {
+          ".validate": "newData.hasChildren(['name','group','active']) && newData.child('name').isString() && newData.child('name').val().length <= 120 && newData.child('group').isString() && newData.child('active').isBoolean()"
+        }
+      },
+      "fee_obligations": {
+        "$id": {
+          ".validate": "newData.hasChildren(['studentId','month','amount']) && newData.child('studentId').isString() && newData.child('month').isString() && newData.child('amount').isNumber() && newData.child('amount').val() >= 0"
+        }
+      },
+      "fee_payments": {
+        "$id": {
+          ".validate": "newData.hasChildren(['studentId','month','amount']) && newData.child('studentId').isString() && newData.child('month').isString() && newData.child('amount').isNumber() && newData.child('amount').val() >= 0"
+        }
+      },
+      "responses": {},
+      "analytics": {}
+    },
+    "achievements": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'REPLACE_WITH_ADMIN_UID'"
+    },
+    "competitions": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'REPLACE_WITH_ADMIN_UID'"
+    }
+  }
+}
