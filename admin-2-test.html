@@ -1,0 +1,44 @@
+<!doctype html><html lang="hu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kaminari 2.0 – Teszt</title><style>:root{font-family:system-ui;color:#eef6ff;background:#071525}*{box-sizing:border-box}body{margin:0;padding:18px}main{max-width:720px;margin:auto}h1{font-size:26px}section{background:#102842;border:1px solid #31597d;border-radius:16px;padding:18px;margin:15px 0}label{display:block;margin:12px 0 5px}input,textarea,select{width:100%;background:#071c31;color:white;border:1px solid #5c82a3;border-radius:9px;padding:12px;font:inherit}textarea{min-height:135px}button{border:0;border-radius:10px;background:#e9bc4b;color:#102039;padding:12px 17px;font-weight:700;cursor:pointer;margin:8px 8px 4px 0}button:disabled{opacity:.5}a{color:#9cddff}.hidden{display:none}small{color:#bbcee0}#status{min-height:22px;white-space:pre-wrap}</style></head><body><main><h1>Kaminari 2.0 – TESZT</h1><p>Csak fiktív nevek! Elkülönített tesztadatbázis-útvonal.</p><section id="login"><label>E-mail</label><input id="email" type="email"><label>Jelszó</label><input id="password" type="password"><button id="signIn">Belépés</button><p id="loginStatus"></p></section><section id="editor" class="hidden"><button id="signOut">Kijelentkezés</button><h2>✓ Tagdíjnyilvántartás (privát)</h2><label>Hónap</label><input id="ledgerMonth" type="month"><label>Dojo</label><select id="ledgerDojo"><option value="h">Hévízgyörk</option><option value="t">Tura</option></select><div id="ledgerAdd"><label>Csoport</label><select id="ledgerGroup"></select><label>Tanítvány neve</label><input id="ledgerName" maxlength="120"><button id="ledgerAddBtn">+ Hozzáadás</button></div><p id="ledgerStatus" role="status"></p><div id="ledgerRows"></div></section></main><script type="module">
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+import {getDatabase,ref,get,set,push,onValue} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js';
+const ADMIN='RE9QjkQYIVgEOqZ5gpVQbINffDv2';
+const app=initializeApp({apiKey:'AIzaSyBIW12puH6ctU9619GZtWTtHfnoTo6POPk',authDomain:'kaminari-dojo.firebaseapp.com',databaseURL:'https://kaminari-dojo-default-rtdb.europe-west1.firebasedatabase.app',projectId:'kaminari-dojo',appId:'1:293927833714:web:2af8ecd007cdc4de1db2eb'});
+
+const auth=getAuth(app),db=getDatabase(app),$=id=>document.getElementById(id);
+$('signIn').onclick=async()=>{try{await signInWithEmailAndPassword(auth,$('email').value,$('password').value);$('password').value=''}catch(e){$('loginStatus').textContent=e.code}};
+$('signOut').onclick=()=>signOut(auth);
+onAuthStateChanged(auth,u=>{const ok=u?.uid===ADMIN;$('editor').classList.toggle('hidden',!ok);$('login').classList.toggle('hidden',ok);if(u&&!ok){$('loginStatus').textContent='Nincs jogosultság.';signOut(auth)}});
+const ledgerRef=ref(db,'private/feeLedgerTest');
+const groups={h:{hk:'Kezdő',hh:'Középhaladó',ho:'Óvoda'},t:{t:'Tura'}};
+const currentMonth=()=>{const p=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Budapest',year:'numeric',month:'2-digit'}).formatToParts(new Date());return p.find(x=>x.type==='year').value+'-'+p.find(x=>x.type==='month').value};
+let ledger={},ledgerReady=false,ledgerBusy=false,ledgerUnsub=null;
+const ls=t=>$('ledgerStatus').textContent=t;
+$('ledgerMonth').value=currentMonth();$('ledgerMonth').max=currentMonth();
+function renderLedger(){
+ const month=$('ledgerMonth').value,dojo=$('ledgerDojo').value,now=currentMonth(),editable=ledgerReady&&!ledgerBusy&&month===now&&auth.currentUser?.uid===ADMIN;
+ $('ledgerMonth').max=now;$('ledgerAdd').classList.toggle('hidden',month!==now);$('ledgerAddBtn').disabled=!editable;
+ const select=$('ledgerGroup'),old=select.value;select.replaceChildren();for(const [k,v] of Object.entries(groups[dojo]))select.add(new Option(v,k));if(groups[dojo][old])select.value=old;
+ const root=$('ledgerRows');root.replaceChildren();if(!ledgerReady)return;
+ let total=0,paid=0;
+ for(const [group,label] of Object.entries(groups[dojo])){
+ const h=document.createElement('h3');h.textContent=label;root.append(h);
+ const members=Object.entries(ledger.members||{}).filter(([id,m])=>m.group===group&&m.start<=month&&(!m.end||month<m.end)).sort((a,b)=>a[1].name.localeCompare(b[1].name,'hu'));
+ for(const [id,m] of members){total++;const checked=ledger.payments?.[month]?.[id]===true;if(checked)paid++;
+ const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:12px;border-bottom:1px solid #31597d;padding:8px 0';
+ const name=document.createElement('span');name.textContent=m.name;name.style.flex='1';
+ const check=document.createElement('input');check.type='checkbox';check.checked=checked;check.disabled=!editable;check.style.cssText='width:24px;height:24px;flex:none';check.setAttribute('aria-label',m.name+' – fizetett');
+ check.onchange=()=>{const value=check.checked;ledgerWrite(()=>set(ref(db,'private/feeLedgerTest/payments/'+month+'/'+id),value))};
+ row.append(name,check);
+ if(month===now){const del=document.createElement('button');del.textContent='Törlés';del.disabled=!editable;del.onclick=()=>{if(confirm(m.name+' eltávolítása az aktuális és későbbi hónapokból? A korábbi adatok megmaradnak.'))ledgerWrite(()=>set(ref(db,'private/feeLedgerTest/members/'+id+'/end'),month))};row.append(del)}
+ root.append(row);
+ }
+ }
+ const summary=document.createElement('p');summary.textContent='Fizetett: '+paid+' / '+total+' fő · Hátralévő: '+(total-paid)+' fő';root.prepend(summary);
+}
+async function ledgerWrite(fn){if(!ledgerReady||ledgerBusy||auth.currentUser?.uid!==ADMIN||$('ledgerMonth').value!==currentMonth())return;ledgerBusy=true;renderLedger();try{await fn();ls('Mentve.')}catch(e){ls('Mentési hiba: '+(e.code||e.message))}finally{ledgerBusy=false;renderLedger()}}
+$('ledgerMonth').onchange=renderLedger;$('ledgerDojo').onchange=renderLedger;
+$('ledgerAddBtn').onclick=()=>{const name=$('ledgerName').value.trim(),group=$('ledgerGroup').value;if(!name)return ls('Add meg a nevet.');if(!groups[$('ledgerDojo').value][group])return;const month=currentMonth();ledgerWrite(async()=>{await set(push(ref(db,'private/feeLedgerTest/members')),{name,group,start:month});$('ledgerName').value=''})};
+onAuthStateChanged(auth,u=>{if(ledgerUnsub)ledgerUnsub();ledgerUnsub=null;ledger={};ledgerReady=false;$('ledgerName').value='';renderLedger();if(u?.uid!==ADMIN)return;ls('Betöltés…');ledgerUnsub=onValue(ledgerRef,s=>{ledger=s.val()||{};ledgerReady=true;ls('Online nyilvántartás betöltve.');renderLedger()},e=>{ledgerReady=false;ledger={};renderLedger();ls('Hozzáférési hiba: '+e.code)})});
+let lastLedgerMonth=currentMonth();setInterval(()=>{const now=currentMonth();if(now!==lastLedgerMonth){if($('ledgerMonth').value===lastLedgerMonth)$('ledgerMonth').value=now;lastLedgerMonth=now;renderLedger()}},15000);
+</script></body></html>
